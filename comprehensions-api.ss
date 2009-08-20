@@ -32,8 +32,19 @@
          body ...))]
 
       [(for/fold/vector
+        ([accum-id init-expr] ...)
+        ([idx length n-vectors])
+        body ...)
+       (syntax
+        (let ([l length])
+          (for/fold/vector
+           ([accum-id init-expr] ...)
+           ([idx l n-vectors] [_ (in-range l)])
+           body ...)))]
+      
+      [(for/fold/vector
         ()
-        ([idx length n-vectors] for-clause ...)
+        ([idx length n-vectors] for-clause0 for-clause ...)
         body ...)
        (with-syntax ([(v-id ...) 
                       (datum->syntax
@@ -52,8 +63,7 @@
                  [idx 0]
                  [v-id (make-vector l)] ...)
             (begin
-              (for ([_ (in-range l)] ;; Ensure there is at least one sequence
-                    for-clause ...)
+              (for (for-clause0 for-clause ...)
                    (let-values (([temp-id ...] (let () body ...)))
                      (vector-set! v-id idx temp-id) ...
                      (set! idx (add1 idx))))
@@ -61,7 +71,7 @@
         
       [(for/fold/vector
         ([accum-id0 init-expr0] [accum-id init-expr] ...)
-        ([idx length n-vectors] for-clause ...)
+        ([idx length n-vectors] for-clause0 for-clause ...)
         body ...)
        (with-syntax ([(v-id ...)
                       (datum->syntax
@@ -82,7 +92,7 @@
             (let-values (([accum-id0 accum-id ...]
                           (for/fold ([accum-id0 init-expr0]
                                      [accum-id  init-expr] ...)
-                              ([_ (in-range l)] for-clause ...)
+                              (for-clause0 for-clause ...)
                             (let-values (([accum-id0 accum-id ... temp-id ...]
                                           (let () body ...)))
                               (vector-set! v-id idx temp-id) ...
