@@ -73,10 +73,10 @@
   (with-style (dc s)
     (match f
       [(struct Panel (ox oy l t w h s mk))
-       (define new-origin (vector (+ x ox) (+ y oy)))
+       (define new-origin (vector-immutable (+ x ox) (+ y oy)))
        (draw-mark dc new-origin mk)]
       [(struct Overlay (ox oy l t w h s parts))
-       (define new-origin (vector (+ x ox) (+ y oy)))
+       (define new-origin (vector-immutable (+ x ox) (+ y oy)))
        (for-each (lambda (f)
                    (draw-frame dc new-origin f))
                  parts)]
@@ -113,7 +113,7 @@
     (define-values (width height) (send dc get-size))
     (define canvas-bounding-square-width (min width height))
     (define scale (/ canvas-bounding-square-width data-bounding-square-width))
-    (define origin (vector ox oy))
+    (define origin (vector-immutable ox oy))
     (printf "Scale ~a\n" scale)
     (parameterize
         ([current-scale scale])

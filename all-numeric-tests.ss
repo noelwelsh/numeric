@@ -1,5 +1,5 @@
 ;;;
-;;; Time-stamp: <2009-05-26 11:48:58 nhw>
+;;; Time-stamp: <2009-08-20 12:54:06 nhw>
 ;;;
 ;;; Copyright (C) by Noel Welsh. 
 ;;;
@@ -68,6 +68,6 @@
    ;;unet-tests
    ;;unet-util-tests
    ;;util-tests
-   evector-tests
+   ;;evector-tests
    ))
 

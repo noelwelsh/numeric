@@ -49,6 +49,32 @@
           (vector 0 1 2 3 0 1 2 3 0 1 2 3 0 1 2 3)))
 
         (test-case
+         "for/vector many arg with nested sequence"
+         (define-values (v1 v2 v3)
+          (for/vector ([i 4 3]
+                       [a (in-list (list 1 2 3 4 #f 9  9))]
+                       [b (in-list (list 5 6 7 8  9 #f 9))]
+                       [c (in-list (list 0 1 2 3  9 9 #f))]
+                       #:when (and a b c))
+            (values a b c)))
+         (check-equal? v1 #(1 2 3 4))
+         (check-equal? v2 #(5 6 7 8))
+         (check-equal? v3 #(0 1 2 3)))
+
+        (test-case
+         "for/vector many arg with nested sequence interrupting middle of iteration"
+         (define-values (v1 v2 v3)
+          (for/vector ([i 4 3]
+                       [a (in-list (list 1 2 #f 3 4))]
+                       [b (in-list (list 5 6 #f 7 8))]
+                       [c (in-list (list 0 1 #f 2 3))]
+                       #:when (and a b c))
+            (values a b c)))
+         (check-equal? v1 #(1 2 3 4))
+         (check-equal? v2 #(5 6 7 8))
+         (check-equal? v3 #(0 1 2 3)))
+        
+        (test-case
          "for/fold/vector"
          (let-values (([lst vec]
                        (for/fold/vector ([lst null]) ([i 4])
