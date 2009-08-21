@@ -7,44 +7,44 @@
 (define/provide-test-suite frame-tests
   (test-case
    "dot"
-   (check-equal? (dot (vector -2 2))
+   (check-equal? (dot (vector-immutable -2 2))
                  (make-Panel -2 2 0 0 0 0 #f (make-Dot))))
 
   (test-case
    "circle"
-   (check-equal? (circle (vector -2 2 6))
+   (check-equal? (circle (vector-immutable -2 2 6))
                  (make-Panel -2 2 -6 -6 12 12 #f (make-Circle 6))))
 
   (test-case
    "box"
-   (check-equal? (box (vector -2 2 4 8))
+   (check-equal? (box (vector-immutable -2 2 4 8))
                  (make-Panel -2 2 -2 -4 4 8 #f (make-Box 4 8))))
 
   (test-case
    "line"
-   (check-equal? (line (vector -2 -2) (vector 4 -2))
+   (check-equal? (line (vector-immutable -2 -2) (vector-immutable 4 -2))
                  (make-Panel 1 -2 -3 0 6 0 #f
                              (make-Line -3 0 3 0)))
-   (check-equal? (line (vector -2 -2) (vector 4 4))
+   (check-equal? (line (vector-immutable -2 -2) (vector-immutable 4 4))
                  (make-Panel 1 1 -3 -3 6 6 #f
                              (make-Line -3 -3 3 3)))
-   (check-equal? (line (vector -2 -2) (vector -2 4))
+   (check-equal? (line (vector-immutable -2 -2) (vector-immutable -2 4))
                  (make-Panel -2 1  0 -3  0 6  #f
                              (make-Line 0 -3 0 3)))
 
-   (check-equal? (line (vector 4 4) (vector 4 -2))
+   (check-equal? (line (vector-immutable 4 4) (vector-immutable 4 -2))
                  (make-Panel 4 1  0 -3 0 6  #f
                              (make-Line 0 3 0 -3)))
-   (check-equal? (line (vector 4 -2) (vector -2 4))
+   (check-equal? (line (vector-immutable 4 -2) (vector-immutable -2 4))
                  (make-Panel 1 1  -3 -3  6 6  #f
                              (make-Line -3 3 3 -3)))
-   (check-equal? (line (vector 4 4) (vector -2 4))
+   (check-equal? (line (vector-immutable 4 4) (vector-immutable -2 4))
                  (make-Panel 1 4  -3 0 6 0  #f
                              (make-Line -3 0 3 0))))
 
   (test-case
    "cross"
-   (define p (cross (vector 0 0)))
+   (define p (cross (vector-immutable 0 0)))
    (check-equal? (Frame-left p) -.5)
    (check-equal? (Frame-top p) -.5)
    (check-equal? (Frame-width p) 1.)
@@ -52,7 +52,7 @@
 
   (test-case
    "overlay atomic marks"
-   (define f (overlay (circle (vector 0 0 10)) (dot (vector -11 -11))))
+   (define f (overlay (circle (vector-immutable 0 0 10)) (dot (vector-immutable -11 -11))))
    (check-equal? f
                  (make-Overlay 0 0 -11 -11 21 21 #f
                                (list (make-Panel 0 0 -10 -10 20 20 #f
@@ -62,8 +62,8 @@
 
   (test-case
    "overlay overlays"
-   (define f (overlay (overlay (circle (vector 0 0 10)) (circle (vector -2 -2 5)))
-                      (overlay (circle (vector -10 -10 2)) (circle (vector 3 3 3)))))
+   (define f (overlay (overlay (circle (vector-immutable 0 0 10)) (circle (vector-immutable -2 -2 5)))
+                      (overlay (circle (vector-immutable -10 -10 2)) (circle (vector-immutable 3 3 3)))))
    (check-equal? f
                  (make-Overlay 0 0 -12 -12 22 22 #f
                                (list
@@ -82,9 +82,9 @@
 
   (test-case
    "overlays"
-   (define f (overlays (list (overlay (circle (vector 0 0 5)) (dot (vector 0 0)))
-                             (overlay (circle (vector 2 2 5)) (dot (vector 2 2)))
-                             (overlay (circle (vector 3 3 2)) (dot (vector 3 3))))))
+   (define f (overlays (list (overlay (circle (vector-immutable 0 0 5)) (dot (vector-immutable 0 0)))
+                             (overlay (circle (vector-immutable 2 2 5)) (dot (vector-immutable 2 2)))
+                             (overlay (circle (vector-immutable 3 3 2)) (dot (vector-immutable 3 3))))))
    (check-equal? f
                  (make-Overlay 0 0 -5 -5 12 12 #f
                                (list
