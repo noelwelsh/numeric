@@ -30,28 +30,44 @@
                [label title]
                [width (inexact->exact (ceiling (+ (* 2 padding) height)))]
                [height (inexact->exact (ceiling (+ (* 2 padding) width)))]))
-  ;; (Channelof 'advance 'current)
+  ;; (Channelof 'forward 'backward 'current)
   (define t-chan (make-channel))
   ;; (Channelof Frame)
   (define c-chan (make-channel))
-  (define t (thread
-             (lambda ()
-               (let loop ([frames frames])
-                 (if (null? frames)
-                     #f
-                     (match (channel-get t-chan)
-                       ['advance
-                        (loop (cdr frames))]
-                       ['current
-                        (channel-put c-chan (car frames))
-                        (loop frames)]))))))
+  (define t
+    (let* ([frames (list->vector frames)]
+           [n (vector-length frames)])
+      (thread
+       (lambda ()
+         (let loop ([idx 0])
+           (match (channel-get t-chan)
+                  ['forward
+                   (loop (modulo (add1 idx) n))]
+                  ['backward
+                   (loop (modulo (sub1 idx) n))]
+                  ['current
+                   (channel-put c-chan (vector-ref frames idx))
+                   (loop idx)]))))))
   (define c (new (class canvas%
                    (super-new)
+                   (define (forward)
+                     (channel-put t-chan 'forward)
+                     (send this refresh)
+                     (yield))
+                   (define (backward)
+                     (channel-put t-chan 'backward)
+                     (send this refresh)
+                     (yield))
+                   (define/override (on-char evt)
+                     (case (send evt get-key-code)
+                       [(left up) (backward)]
+                       [(right down) (forward)]))
                    (define/override (on-event evt)
-                     (when (send evt button-down?)
-                       (channel-put t-chan 'advance)
-                       (send this refresh)
-                       (yield))))
+                     (cond
+                      [(send evt button-down? 'left)
+                       (forward)]
+                      [(send evt button-down? 'right)
+                       (backward)])))
                  [parent f]
                  [paint-callback
                   (lambda (canvas dc)

@@ -1,7 +1,7 @@
 #lang typed-scheme
 
 ;; A Mark is a graphical element of a drawing. It has no
-;; location -- that is determined by the panel the mark is
+;; location -- that is determined by the frame the mark is
 ;; located in.
 ;;
 ;; A Mark is always centered in its frame, and the centre
