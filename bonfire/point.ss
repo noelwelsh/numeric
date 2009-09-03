@@ -13,6 +13,10 @@
 
 (define-type-alias Point (Vectorof Number))
 
+(: point (Number * -> Point))
+(define (point . vals)
+  (apply vector vals))
+
 (: point-x (Point -> Number))
 (define (point-x pt)
   (vector-ref pt 0))
@@ -43,6 +47,7 @@
 
 (provide
  Point
+ point
  point-x
  point-y
  point-r
