@@ -7,9 +7,9 @@
 (define height 300)
 (define padding 20)
 
-(define (plot-screen label box)
+(define (plot-screen frame #:title [title "Bonfire"])
   (define f (new frame%
-               [label label]
+               [label title]
                [width (inexact->exact (ceiling (+ (* 2 padding) height)))]
                [height (inexact->exact (ceiling (+ (* 2 padding) width)))]))
   (define c (new (class canvas%
@@ -18,7 +18,7 @@
                      (when (send evt button-down?)
                        (printf "[~a ~a]\n" (send evt get-x) (send evt get-y)))))
                  [parent f]
-                 [paint-callback (make-plotter box)]))
+                 [paint-callback (make-plotter frame)]))
   (send f show #t)
   f)
 

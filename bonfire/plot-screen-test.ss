@@ -4,25 +4,22 @@
 ;;
 ;; Run these tests from MrEd
 
-(require "plot.ss"
-         "screen.ss"
-         "frame.ss"
-         "point.ss")
+(require "main.ss")
 
 
 ;; Four circles arranged in a square. This tests mark
 ;; constructors and frame coordinates
 (define (four-circles)
-  (plot-screen "Four Circles"
-               (circles
+  (plot-screen (circles
                 (list (point 0 0 3)
                       (point 0 12 3)
                       (point 12 12 3)
-                      (point 12 0 3)))))
+                      (point 12 0 3)))
+               #:title "Four Circles"))
 
 ;; A square!  Tests lines
 (define (square)
-  (plot-screen "Square"
+  (plot-screen #:title "Square"
                (lines (list (cons (point 2 0) (point 3 2))
                             (cons (point 3 2) (point 1 3))
                             (cons (point 1 3) (point 0 1))
@@ -30,7 +27,7 @@
 
 ;; Tests crosses and colours
 (define (colourful-crosses)
-  (plot-screen "Colourful Crosses"
+  (plot-screen #:title "Colourful Crosses"
                (overlay
                 (colour (crosses (list (point 0 0) (point 10 0) (point 0 10) (point 10 10)))
                         (point 255 0 0 1))

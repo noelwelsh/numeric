@@ -3,7 +3,7 @@
 (require
  "point.ss"
  "frame.ss"
- "screen.ss"))
+ "screen.ss")
 
 (provide
  (all-from-out "point.ss"
