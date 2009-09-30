@@ -11,7 +11,7 @@
 ;(define padding 20)
 
 
-
+(define white-brush (make-object brush% "white" 'solid))
 (define clear-brush (make-object brush% "white" 'transparent))
 ;(define (make-black-pen) (make-object pen% "black" (/ (current-scale)) 'solid))
 
@@ -117,12 +117,20 @@
     (printf "Scale ~a\n" scale)
     (parameterize
         ([current-scale scale])
+      ;; Clearing the DC doesn't always work, so we attempt
+      ;; drawing a white rectangle over it
+      (send dc set-origin 0 0)
+      (send dc set-scale 1 1)
+      (send dc set-brush white-brush)
+      (send dc draw-rectangle 0 0 width height)
+
+      (send dc clear)
+      
       (send dc set-smoothing 'smoothed)
       (send dc set-origin (* scale (- l)) (* scale (- t)))
       (send dc set-scale scale scale)
-      (send dc set-brush clear-brush)
       
-      (send dc clear)
+      (send dc set-brush clear-brush)
       (draw-frame dc origin f))))
 
 
