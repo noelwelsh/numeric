@@ -39,15 +39,23 @@
            [n (vector-length frames)])
       (thread
        (lambda ()
-         (let loop ([idx 0])
+         (let loop ([idx 0] [saved null])
            (match (channel-get t-chan)
                   ['forward
-                   (loop (modulo (add1 idx) n))]
+                   (loop (modulo (add1 idx) n) saved)]
                   ['backward
-                   (loop (modulo (sub1 idx) n))]
+                   (loop (modulo (sub1 idx) n) saved)]
                   ['current
+                   (printf "Displaying slide ~a\n" idx)
                    (channel-put c-chan (vector-ref frames idx))
-                   (loop idx)]))))))
+                   (loop idx saved)]
+                  ['save
+                   (if (member idx saved)
+                       (loop idx saved)
+                       (loop idx (cons idx saved)))]
+                  ['dump
+                   (printf "Saved slides:\n~a\n" saved)
+                   (loop idx saved)]))))))
   (define c (new (class canvas%
                    (super-new)
                    (define (forward)
@@ -58,10 +66,18 @@
                      (channel-put t-chan 'backward)
                      (send this refresh)
                      (yield))
+                   (define (save)
+                     (channel-put t-chan 'save)
+                     (yield))
+                   (define (dump)
+                     (channel-put t-chan 'dump)
+                     (yield))
                    (define/override (on-char evt)
                      (case (send evt get-key-code)
                        [(left up) (backward)]
-                       [(right down) (forward)]))
+                       [(right down) (forward)]
+                       [(#\space) (save)]
+                       [(#\return) (dump)]))
                    (define/override (on-event evt)
                      (cond
                       [(send evt button-down? 'left)
