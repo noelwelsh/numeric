@@ -30,7 +30,7 @@
 ;; vector-zeros
 ;; vector-copy
 (define constructor-names
-  '(-ones -zeros -copy))
+  '(-ones -zeros -copy -reverse))
 
 ;; Predicates
 ;; vector-null?

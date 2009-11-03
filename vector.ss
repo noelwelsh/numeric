@@ -37,7 +37,8 @@
           vector-length)
   (export vector-ones
           vector-zeros
-          vector-copy))
+          vector-copy
+          vector-reverse))
 
 ;;; Predicates
 

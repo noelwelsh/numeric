@@ -160,6 +160,11 @@
          (check-equal? (vector 1 2 3 4 5) (vector-copy (vector 1 2 3 4 5)))
          (check-equal? (vector) (vector-copy (vector))))
 
+        (test-case
+         "vector-reverse"
+         (check-equal? (vector-reverse (vector)) (vector))
+         (check-equal? (vector-reverse (vector 1 2 3 4 5))
+                       (vector 5 4 3 2 1)))
         
         ;; Predicates
 

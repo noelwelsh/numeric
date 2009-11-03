@@ -37,7 +37,8 @@
           evector-length)
   (export evector-ones
           evector-zeros
-          evector-copy))
+          evector-copy
+          evector-reverse))
 
 ;;; Predicates
 

@@ -1,5 +1,5 @@
 ;;;
-;;; Time-stamp: <2009-07-22 11:19:48 noel>
+;;; Time-stamp: <2009-11-03 11:37:35 noel>
 ;;;
 ;;; Copyright (C) by Noel Welsh. 
 ;;;
@@ -72,7 +72,8 @@
           f64vector-length)
   (export f64vector-ones
           f64vector-zeros
-          f64vector-copy))
+          f64vector-copy
+          f64vector-reverse))
 
 ;;; Predicates
 
