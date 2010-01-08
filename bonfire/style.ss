@@ -1,8 +1,8 @@
 #lang typed-scheme
 
-(define-struct: Colour ([r : Integer]
-                        [g : Integer]
-                        [b : Integer]
+(define-struct: Colour ([r : Real]
+                        [g : Real]
+                        [b : Real]
                         [a : Number]))
 
 (define-struct: Style ([outline : Colour]

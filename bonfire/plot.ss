@@ -10,11 +10,6 @@
 
 ;(define padding 20)
 
-
-(define white-brush (make-object brush% "white" 'solid))
-(define clear-brush (make-object brush% "white" 'transparent))
-;(define (make-black-pen) (make-object pen% "black" (/ (current-scale)) 'solid))
-
 ;; Hack so match can work with Typed Scheme structs
 (define-struct Mark () #:omit-define-values)
 (define-struct Dot () #:omit-define-values)
@@ -102,40 +97,8 @@
     (send dc draw-line (+ x s-x) (+ y s-y) (+ x e-x) (+ y e-y))]))
 
 
-;;(: make-plotter (Frame -> Void))
-(define (make-plotter f)
-  (match-define (struct Frame (ox oy l t w h s)) f)
-  (define bottom (+ t h))
-  (define right (+ l w))
-  (define data-bounding-square-width (max w h))
-
-  (lambda (canvas dc)
-    (define-values (width height) (send dc get-size))
-    (define canvas-bounding-square-width (min width height))
-    (define scale (/ canvas-bounding-square-width data-bounding-square-width))
-    (define origin (vector-immutable ox oy))
-    (printf "Scale ~a\n" scale)
-    (parameterize
-        ([current-scale scale])
-      ;; Clearing the DC doesn't always work, so we attempt
-      ;; drawing a white rectangle over it
-      (send dc set-origin 0 0)
-      (send dc set-scale 1 1)
-      (send dc set-brush white-brush)
-      (send dc draw-rectangle 0 0 width height)
-
-      (send dc clear)
-      
-      (send dc set-smoothing 'smoothed)
-      (send dc set-origin (* scale (- l)) (* scale (- t)))
-      (send dc set-scale scale scale)
-      
-      (send dc set-brush clear-brush)
-      (draw-frame dc origin f))))
-
-
 (provide
- make-plotter
+ draw-frame
  dot
  circle
  box
@@ -144,4 +107,6 @@
  overlays
  dots
  circles
- lines)
+ lines
+
+ current-scale)
