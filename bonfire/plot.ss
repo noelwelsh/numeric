@@ -20,7 +20,7 @@
 (define-struct (Panel Frame) (mark) #:omit-define-values)
 (define-struct (Overlay Frame) (parts) #:omit-define-values)
 (define-struct Colour (r g b a) #:omit-define-values)
-(define-struct Style (outline fill) #:omit-define-values)
+(define-struct Style (outline fill width) #:omit-define-values)
 
 
 ;;; Scale
@@ -31,14 +31,18 @@
 
 (define default-style
   (make-Style (make-Colour 0 0 0 1)
-              (make-Colour 255 255 255 1)))
+              (make-Colour 255 255 255 1)
+              1.0))
 
 (define current-style (make-parameter default-style))
 
 (define (apply-style dc style)
-  ;; We only care about outline for now.
+  ;; We only care about outline and width for now.
   (send dc set-pen
-        (make-object pen% (Colour->color% (Style-outline style)) (/ (current-scale)) 'solid)))
+        (make-object pen%
+                     (Colour->color% (Style-outline style))
+                     (/ (Style-width style) (current-scale))
+                     'solid)))
 
 (define-syntax with-style
   (syntax-rules ()

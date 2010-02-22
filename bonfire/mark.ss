@@ -1,4 +1,4 @@
-#lang typed-scheme
+#lang typed/scheme
 
 ;; A Mark is a graphical element of a drawing. It has no
 ;; location -- that is determined by the frame the mark is
@@ -12,10 +12,10 @@
 ;;
 (define-struct: Mark () #:transparent)
 (define-struct: (Dot Mark) () #:transparent)
-(define-struct: (Box Mark) ([width : Number] [height : Number]) #:transparent)
-(define-struct: (Circle Mark) ([radius : Number]) #:transparent)
-(define-struct: (Line Mark) ([start-x : Number] [start-y : Number]
-                             [end-x : Number]   [end-y : Number]) #:transparent)
+(define-struct: (Box Mark) ([width : Real] [height : Real]) #:transparent)
+(define-struct: (Circle Mark) ([radius : Real]) #:transparent)
+(define-struct: (Line Mark) ([start-x : Real] [start-y : Real]
+                             [end-x : Real]   [end-y : Real]) #:transparent)
 
 (provide
  (struct-out Mark)

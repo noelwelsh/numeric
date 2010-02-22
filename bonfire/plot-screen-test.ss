@@ -25,14 +25,20 @@
                             (cons (point 1 3) (point 0 1))
                             (cons (point 0 1) (point 2 0))))))
 
-;; Tests crosses and colours
+;; Tests crosses, colours, and widths
 (define (colourful-crosses)
   (plot-screen #:title "Colourful Crosses"
                (overlay
-                (colour (crosses (list (point 0 0) (point 10 0) (point 0 10) (point 10 10)))
-                        (point 255 0 0 1))
-                (colour (crosses (list (point 0 5) (point 5 0) (point 5 10) (point 10 5)))
-                        (point 0 0 255 1)))))
+                (width
+                 (colour
+                  (crosses (list (point 0 0) (point 10 0) (point 0 10) (point 10 10)))
+                  (point 255 0 0 1))
+                 4)
+                (width
+                 (colour
+                  (crosses (list (point 0 5) (point 5 0) (point 5 10) (point 10 5)))
+                  (point 0 0 255 1))
+                 2))))
 
 ;; Slides
 (define (travelling-circle)

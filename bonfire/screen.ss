@@ -5,24 +5,39 @@
  "plot.ss"
  (except-in "frame.ss" Frame))
 
-(define width 300)
-(define height 300)
-(define padding 20)
+(define default-width 300)
+(define default-height 300)
+(define default-padding 20)
 
 (define (plot-screen frame #:title [title "Bonfire"])
+  (define scale 0)
+  (define origin-x 0)
+  (define origin-y 0)
+                   
   (define f (new frame%
                [label title]
-               [width (inexact->exact (ceiling (+ (* 2 padding) height)))]
-               [height (inexact->exact (ceiling (+ (* 2 padding) width)))]))
+               [width (inexact->exact (ceiling (+ (* 2 default-padding) default-width)))]
+               [height (inexact->exact (ceiling (+ (* 2 default-padding) default-height)))]))
   (define c (new (class canvas%
                    (super-new)
                    (define/override (on-event evt)
                      (when (send evt button-down?)
-                       (printf "[~a ~a]\n" (send evt get-x) (send evt get-y)))))
+                       (let ([x (send evt get-x)]
+                             [y (send evt get-y)])
+                         (printf "~a ~a ~a\n" scale origin-x origin-y)
+                         (printf "Screen: [~a ~a]\n" x y)
+                         (printf "Data: [~a ~a]\n"
+                                 (- (/ x scale) origin-x)
+                                 (- (/ y scale) origin-y))))))
                  [parent f]
                  [paint-callback
                   (lambda (canvas dc)
-                    (setup-dc-and-draw dc frame))]))
+                    (setup-dc-and-draw dc frame)
+                    (let-values (([s-x s-y] (send dc get-scale))
+                                 ([o-x o-y] (send dc get-origin)))
+                      (set! scale s-x)
+                      (set! origin-x (/ o-x scale))
+                      (set! origin-y (/ o-y scale))))]))
   (send f show #t)
   f)
 
@@ -32,8 +47,8 @@
 (define (slides frames #:title [title "Slides"])
   (define f (new frame%
                [label title]
-               [width (inexact->exact (ceiling (+ (* 2 padding) height)))]
-               [height (inexact->exact (ceiling (+ (* 2 padding) width)))]))
+               [width (inexact->exact (ceiling (+ (* 2 default-padding) default-width)))]
+               [height (inexact->exact (ceiling (+ (* 2 default-padding) default-height)))]))
   ;; (Channelof 'forward 'backward 'current)
   (define t-chan (make-channel))
   ;; (Channelof Frame)

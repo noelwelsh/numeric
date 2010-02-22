@@ -1,12 +1,13 @@
-#lang typed-scheme
+#lang typed/scheme
 
 (define-struct: Colour ([r : Real]
                         [g : Real]
                         [b : Real]
-                        [a : Number]))
+                        [a : Real]))
 
 (define-struct: Style ([outline : Colour]
-                       [fill : Colour]))
+                       [fill : Colour]
+                       [width : Real]))
 
 (provide
  (struct-out Colour)

@@ -1,4 +1,4 @@
-#lang typed-scheme
+#lang typed/scheme
 
 (require
  scheme/match
@@ -16,9 +16,9 @@
 ;; Marks in a panel are always centered in the
 ;; panel. I.e. the x and y offsets give the centre of the
 ;; circle/point/box/etc.
-(define-struct: Frame ([offset-x : Number] [offset-y : Number]
-                       [left : Number] [top : Number]
-                       [width : Number] [height : Number]
+(define-struct: Frame ([offset-x : Real] [offset-y : Real]
+                       [left : Real] [top : Real]
+                       [width : Real] [height : Real]
                        [style : (U #f Style)]) #:transparent)
 (define-struct: (Panel Frame) ([mark : Mark]) #:transparent)
 (define-struct: (Overlay Frame) ([parts : (Listof Frame)]) #:transparent)
@@ -90,7 +90,7 @@
 (define (overlays fs)
   ;; for/fold doesn't work in typed scheme, so we get this tedium
   (define coords
-    (foldl (lambda (#{f : Frame} #{coords : (Vectorof Number)})
+    (foldl (lambda (#{f : Frame} #{coords : (Vectorof Real)})
              (define-values (l1 t1 w1 h1)
                (values (vector-ref coords 0)
                        (vector-ref coords 1)
@@ -102,9 +102,9 @@
            (let-values (((l1 t1 w1 h1) (frame->coords (car fs))))
              (vector l1 t1 w1 h1))
            (cdr fs)))
-  #;(define-values (#{l : Number} #{t : Number} #{w : Number} #{h : Number})
-    (for/fold ([#{l : Number} l1] [#{t : Number} t1]
-               [#{w : Number} w1] [#{h : Number} h1])
+  #;(define-values (#{l : Real} #{t : Real} #{w : Real} #{h : Real})
+    (for/fold ([#{l : Real} l1] [#{t : Real} t1]
+               [#{w : Real} w1] [#{h : Real} h1])
         ([f (in-list (cdr fs))])
       (define-values (l2 t2 w2 h2) (frame->coords f))
       (bounding-box l t w h l2 t2 w2 h2)))
@@ -137,15 +137,8 @@
 ;;; Styles
 
 ;; Set outline and fill to the same colour
-(: colour (Frame (Vectorof Number) -> Frame))
+(: colour (Frame (Vectorof Real) -> Frame))
 (define (colour f c)
-  (define o-x (Frame-offset-x f))
-  (define o-y (Frame-offset-y f))
-  (define l (Frame-left f))
-  (define t (Frame-top f))
-  (define w (Frame-width f))
-  (define h (Frame-height f))
-
   (define len (vector-length c))
   (cond
     [(= len 3) 
@@ -154,16 +147,21 @@
                (round (vector-ref c 1))
                (round (vector-ref c 2))
                1)])
-       (style f (make-Style c c)))]
+       (merge-style f c c #f))]
     [(= len 4)
      (let ([c (make-Colour
                (round (vector-ref c 0))
                (round (vector-ref c 1))
                (round (vector-ref c 2))
                (vector-ref c 3))])
-       (style f (make-Style c c)))]
+       (merge-style f c c #f))]
     [else
      (error "colour: Not a valid colour.")]))
+
+;; Set width
+(: width (Frame Real -> Frame))
+(define (width f w)
+  (merge-style f #f #f w))
 
 (: style (Frame Style -> Frame))
 (define (style f s)
@@ -182,9 +180,39 @@
    [(Frame? f)
     (make-Frame o-x o-y l t w h s)]))
 
+(: merge-style (Frame (Option Colour) (Option Colour) (Option Real) -> Frame))
+;; Merge in the style attributes with an existing style
+;; applied to the frame.
+(define (merge-style f outline fill width)
+  (define current-style (Frame-style f))
+  (if current-style
+      (style f
+        (make-Style
+         (if outline
+             outline
+             (Style-outline current-style))
+         (if fill
+             fill
+             (Style-fill current-style))
+         (if width
+             width
+             (Style-width current-style))))
+      (style f
+        (make-Style
+         (if outline
+             outline
+             (make-Colour 0 0 0 1))
+         (if fill
+             fill
+             (make-Colour 255 255 255 1))
+         (if width
+             width
+             1.0)))))
+
+
 ;;; Utilities
 
-(: frame->coords (Frame -> (values Number Number Number Number)))
+(: frame->coords (Frame -> (values Real Real Real Real)))
 (define (frame->coords f)
   (define o-x (Frame-offset-x f))
   (define o-y (Frame-offset-y f))
@@ -194,7 +222,7 @@
   (define h (Frame-height f))
   (values (+ o-x l) (+ o-y t) w h))
 
-(: bounding-box (Number Number Number Number Number Number Number Number -> (values Number Number Number Number)))
+(: bounding-box (Real Real Real Real Real Real Real Real -> (values Real Real Real Real)))
 (define (bounding-box l1 t1 w1 h1 l2 t2 w2 h2)
   (let* ([r1 (+ l1 w1)]
          [r2 (+ l2 w2)]
@@ -207,7 +235,7 @@
          [h3 (- (max b1 b2) t3)])
     (values l3 t3 w3 h3)))
 
-(: frames-bounding-box (Frame Frame -> (values Number Number Number Number)))
+(: frames-bounding-box (Frame Frame -> (values Real Real Real Real)))
 (define (frames-bounding-box f1 f2)
   (define-values (l1 t1 w1 h1) (frame->coords f1))
   (define-values (l2 t2 w2 h2) (frame->coords f2))
@@ -230,6 +258,8 @@
  overlay
 
  colour
+ width
+ style
  
  overlays
  dots

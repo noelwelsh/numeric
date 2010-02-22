@@ -1,4 +1,4 @@
-#lang typed-scheme
+#lang typed/scheme
 
 ;; Points represented as vectors
 ;;
@@ -11,37 +11,37 @@
 ;; client to provide a wider range of data types, and hence
 ;; do less data munging
 
-(define-type-alias Point (Vectorof Number))
+(define-type-alias Point (Vectorof Real))
 
-(: point (Number * -> Point))
+(: point (Real * -> Point))
 (define (point . vals)
   (apply vector vals))
 
-(: point-x (Point -> Number))
+(: point-x (Point -> Real))
 (define (point-x pt)
   (vector-ref pt 0))
 
-(: point-y (Point -> Number))
+(: point-y (Point -> Real))
 (define (point-y pt)
   (vector-ref pt 1))
 
-(: point-r (Point -> Number))
+(: point-r (Point -> Real))
 (define (point-r pt)
   (vector-ref pt 2))
 
-(: point-w (Point -> Number))
+(: point-w (Point -> Real))
 (define (point-w pt)
   (vector-ref pt 2))
 
-(: point-h (Point -> Number))
+(: point-h (Point -> Real))
 (define (point-h pt)
   (vector-ref pt 3))
 
-(: point-end-x (Point -> Number))
+(: point-end-x (Point -> Real))
 (define (point-end-x pt)
   (vector-ref pt 2))
 
-(: point-end-y (Point -> Number))
+(: point-end-y (Point -> Real))
 (define (point-end-y pt)
   (vector-ref pt 3))
 
